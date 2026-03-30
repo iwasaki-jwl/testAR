@@ -36,7 +36,6 @@ const renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.domElement.style.position = "absolute";
 renderer.domElement.style.top = "0";
-renderer.domElement.style.left = "0";
 renderer.domElement.style.zIndex = "3";
 document.body.appendChild(renderer.domElement);
 
@@ -72,6 +71,9 @@ mtlLoader.load('models/ring.mtl', (materials) => {
 
     console.log("リング読み込み成功");
   });
+  // デバッグ用（OBJロード内）
+ring.position.set(0, 0, -0.5);
+ring.scale.set(0.3, 0.3, 0.3);
 });
 
 // =======================
