@@ -3,9 +3,27 @@ body {
   overflow: hidden;
 }
 
-video, canvas {
+/* カメラ映像（最背面） */
+video {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
+  z-index: 1;
+}
+
+/* MediaPipe用（中間） */
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 2;
+}
+
+/* Three.js（最前面） */
+canvas + canvas,
+canvas + video,
+video + canvas {
+  z-index: 3;
 }
