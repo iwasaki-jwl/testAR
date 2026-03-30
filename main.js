@@ -48,17 +48,28 @@ scene.add(light);
 // =======================
 let ring;
 
-const loader = new THREE.OBJLoader();
-loader.load('models/ring.obj', (obj) => {
-  ring = obj;
+const mtlLoader = new THREE.MTLLoader();
+mtlLoader.load('models/ring.mtl', (materials) => {
 
-  // 初期サイズ（重要）
-  ring.scale.set(0.02, 0.02, 0.02);
+  materials.preload();
 
-  // 向き調整（モデルによって変える）
-  ring.rotation.x = Math.PI / 2;
+  const objLoader = new THREE.OBJLoader();
+  objLoader.setMaterials(materials);
 
-  scene.add(ring);
+  objLoader.load('models/ring.obj', (obj) => {
+
+    ring = obj;
+
+    // サイズ調整（かなり重要）
+    ring.scale.set(0.05, 0.05, 0.05);
+
+    // 向き調整
+    ring.rotation.x = Math.PI / 2;
+
+    scene.add(ring);
+
+    console.log("リング読み込み成功");
+  });
 });
 
 // =======================
