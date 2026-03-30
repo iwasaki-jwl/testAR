@@ -30,12 +30,14 @@ startCamera();
 const scene = new THREE.Scene();
 
 const camera3D = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.01, 10);
-camera3D.position.z = 1;
+camera3D.position.z = 2;
 
 const renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.domElement.id = "three-canvas";
 renderer.domElement.style.position = "absolute";
 renderer.domElement.style.top = "0";
+renderer.domElement.style.left = "0";
 renderer.domElement.style.zIndex = "3";
 document.body.appendChild(renderer.domElement);
 
@@ -45,35 +47,28 @@ light.position.set(0, 0, 2);
 scene.add(light);
 
 // =======================
-// OBJロード
+// OBJ + MTLロード
 // =======================
-let ring;
+let ring = null;
 
 const mtlLoader = new THREE.MTLLoader();
 mtlLoader.load('models/ring.mtl', (materials) => {
-
   materials.preload();
 
   const objLoader = new THREE.OBJLoader();
   objLoader.setMaterials(materials);
 
   objLoader.load('models/ring.obj', (obj) => {
-
     ring = obj;
 
-    // サイズ調整（かなり重要）
+    // 初期スケールと位置
     ring.scale.set(0.05, 0.05, 0.05);
-
-    // 向き調整
     ring.rotation.x = Math.PI / 2;
+    ring.position.set(0, 0, -0.5);
 
     scene.add(ring);
-
     console.log("リング読み込み成功");
   });
-  // デバッグ用（OBJロード内）
-ring.position.set(0, 0, -0.5);
-ring.scale.set(0.3, 0.3, 0.3);
 });
 
 // =======================
@@ -93,16 +88,14 @@ hands.setOptions({
 });
 
 // =======================
-// 検出結果
+// 検出結果処理
 // =======================
 hands.onResults(results => {
-
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   if (results.multiHandLandmarks.length > 0 && ring) {
-
     const landmarks = results.multiHandLandmarks[0];
     const p13 = landmarks[13];
     const p14 = landmarks[14];
@@ -111,7 +104,7 @@ hands.onResults(results => {
     const x = (p13.x + p14.x) / 2;
     const y = (p13.y + p14.y) / 2;
 
-    // Three.js座標へ変換
+    // Three.js座標変換
     const posX = (x - 0.5) * 2;
     const posY = -(y - 0.5) * 2;
 
@@ -123,7 +116,7 @@ hands.onResults(results => {
     const angle = Math.atan2(dy, dx);
     ring.rotation.z = -angle;
 
-    // スケール（指サイズ）
+    // スケール
     const dist = Math.hypot(dx, dy);
     const scale = dist * 6;
     ring.scale.set(scale, scale, scale);
@@ -131,7 +124,7 @@ hands.onResults(results => {
 });
 
 // =======================
-// カメラ連携
+// MediaPipeカメラ連携
 // =======================
 const cameraMP = new Camera(video, {
   onFrame: async () => {
