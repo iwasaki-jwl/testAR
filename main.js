@@ -3,7 +3,9 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
 // カメラ起動
-navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+navigator.mediaDevices.getUserMedia({
+    video: { facingMode: "environment"}
+ }).then(stream => {
   video.srcObject = stream;
 });
 
