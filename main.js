@@ -3,7 +3,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
 // =======================
-// カメラ起動（外カメラ）
+// カメラ起動（外カメラ優先）
 // =======================
 async function startCamera() {
   const devices = await navigator.mediaDevices.enumerateDevices();
@@ -29,16 +29,14 @@ startCamera();
 // =======================
 const scene = new THREE.Scene();
 
+// カメラは少し離す
 const camera3D = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.01, 10);
-camera3D.position.z = 2;
+camera3D.position.z = 1;
 
+// Three.jsレンダラー
 const renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.domElement.id = "three-canvas";
-renderer.domElement.style.position = "absolute";
-renderer.domElement.style.top = "0";
-renderer.domElement.style.left = "0";
-renderer.domElement.style.zIndex = "3";
 document.body.appendChild(renderer.domElement);
 
 // ライト
@@ -47,7 +45,7 @@ light.position.set(0, 0, 2);
 scene.add(light);
 
 // =======================
-// OBJ + MTLロード
+// OBJ + MTL ロード
 // =======================
 let ring = null;
 
@@ -61,23 +59,26 @@ mtlLoader.load('models/ring.mtl', (materials) => {
   objLoader.load('models/ring.obj', (obj) => {
     ring = obj;
 
-    // 初期スケールと位置
+    // 初期サイズ・向き
     ring.scale.set(0.05, 0.05, 0.05);
     ring.rotation.x = Math.PI / 2;
     ring.position.set(0, 0, -0.5);
 
     scene.add(ring);
-    console.log("リング読み込み成功");
+
+    console.log("リング読み込み成功", ring);
+  }, undefined, (err) => {
+    console.error("OBJロードエラー:", err);
   });
+}, undefined, (err) => {
+  console.error("MTLロードエラー:", err);
 });
 
 // =======================
-// MediaPipe設定
+// MediaPipe Hands 設定
 // =======================
 const hands = new Hands({
-  locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-  }
+  locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
 });
 
 hands.setOptions({
@@ -88,7 +89,7 @@ hands.setOptions({
 });
 
 // =======================
-// 検出結果処理
+// 検出結果
 // =======================
 hands.onResults(results => {
   canvas.width = video.videoWidth;
@@ -104,7 +105,7 @@ hands.onResults(results => {
     const x = (p13.x + p14.x) / 2;
     const y = (p13.y + p14.y) / 2;
 
-    // Three.js座標変換
+    // Three.js座標へ変換
     const posX = (x - 0.5) * 2;
     const posY = -(y - 0.5) * 2;
 
@@ -124,12 +125,10 @@ hands.onResults(results => {
 });
 
 // =======================
-// MediaPipeカメラ連携
+// MediaPipe カメラ連携
 // =======================
 const cameraMP = new Camera(video, {
-  onFrame: async () => {
-    await hands.send({ image: video });
-  },
+  onFrame: async () => await hands.send({ image: video }),
   width: 640,
   height: 480
 });
