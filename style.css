@@ -3,30 +3,9 @@ body {
   overflow: hidden;
 }
 
-/* カメラ映像（最背面） */
-video {
+video, canvas {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1;
-}
-
-/* MediaPipe canvas（中間） */
-canvas#canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 2;
-}
-
-/* Three.js canvas（最前面） */
-canvas#three-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 3;
-  pointer-events: none; /* 操作透過 */
 }
