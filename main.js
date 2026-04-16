@@ -1,4 +1,3 @@
-
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -11,7 +10,7 @@ navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
 // MediaPipe設定
 const hands = new Hands({
   locateFile: (file) => {
-    return https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file};
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
   }
 });
 
