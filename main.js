@@ -2,10 +2,26 @@ const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-// カメラ起動
-navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-  video.srcObject = stream;
-});
+// iOS対策
+video.setAttribute("playsinline", true);
+video.setAttribute("autoplay", true);
+video.setAttribute("muted", true);
+
+// カメラ起動（外カメラ優先）
+async function startCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: { ideal: "environment" }
+      }
+    });
+    video.srcObject = stream;
+  } catch (err) {
+    console.error("カメラ取得失敗:", err);
+  }
+}
+
+startCamera();
 
 // MediaPipe設定
 const hands = new Hands({
