@@ -10,7 +10,6 @@ video, canvas {
   width: 100%;
 }
 
-/* ボタン */
 #switchBtn {
   position: absolute;
   bottom: 20px;
