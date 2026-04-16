@@ -9,12 +9,3 @@ video, canvas {
   left: 0;
   width: 100%;
 }
-
-#switchBtn {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  z-index: 10;
-  padding: 10px 16px;
-  font-size: 16px;
-}
