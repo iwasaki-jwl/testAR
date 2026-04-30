@@ -2,39 +2,51 @@ const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-// ===== カメラ =====
-navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-  video.srcObject = stream;
+// ===== カメラ制御 =====
+let currentStream = null;
+let currentFacingMode = "user"; // 初期は内カメラ
+
+async function startCamera(facingMode) {
+  // 既存ストリーム停止
+  if (currentStream) {
+    currentStream.getTracks().forEach(track => track.stop());
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { exact: facingMode } }
+    });
+    video.srcObject = stream;
+    currentStream = stream;
+  } catch (e) {
+    // fallback
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: facingMode }
+    });
+    video.srcObject = stream;
+    currentStream = stream;
+  }
+}
+
+// 初期起動
+startCamera(currentFacingMode);
+
+// ===== 切り替えボタン =====
+const switchBtn = document.createElement("button");
+switchBtn.innerText = "カメラ切替";
+switchBtn.style.position = "absolute";
+switchBtn.style.top = "20px";
+switchBtn.style.right = "20px";
+switchBtn.style.zIndex = "10";
+switchBtn.style.padding = "10px";
+document.body.appendChild(switchBtn);
+
+switchBtn.addEventListener("click", () => {
+  currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
+  startCamera(currentFacingMode);
 });
 
-// ===== リング画像 =====
-const ringImages = {
-  blue: new Image(),
-  orange: new Image()
-};
-
-ringImages.blue.src = "models/blueR_5784.png";
-ringImages.orange.src = "models/orangeR_5785.png";
-
-let currentRing = ringImages.blue;
-
-// ===== 切替ボタン =====
-const ringBtn = document.createElement("button");
-ringBtn.innerText = "リング切替";
-ringBtn.style.position = "absolute";
-ringBtn.style.bottom = "20px";
-ringBtn.style.left = "20px";
-ringBtn.style.zIndex = "10";
-ringBtn.style.padding = "10px";
-document.body.appendChild(ringBtn);
-
-ringBtn.addEventListener("click", () => {
-  currentRing = currentRing === ringImages.blue
-    ? ringImages.orange
-    : ringImages.blue;
-});
-
-// ===== MediaPipe =====
+// ===== MediaPipe設定 =====
 const hands = new Hands({
   locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
@@ -48,7 +60,7 @@ hands.setOptions({
   minTrackingConfidence: 0.7
 });
 
-// ===== 描画 =====
+// ===== 検出処理 =====
 hands.onResults(results => {
   if (!video.videoWidth) return;
 
@@ -66,26 +78,15 @@ hands.onResults(results => {
     const x = (p13.x + p14.x) / 2 * canvas.width;
     const y = (p13.y + p14.y) / 2 * canvas.height;
 
-    // ===== サイズを指に合わせる =====
-    const dx = p13.x - p14.x;
-    const dy = p13.y - p14.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    const size = distance * canvas.width * 2;
-
-    // ===== 画像描画 =====
-    if (currentRing.complete) {
-      ctx.drawImage(
-        currentRing,
-        x - size / 2,
-        y - size / 2,
-        size,
-        size
-      );
-    }
+    ctx.beginPath();
+    ctx.arc(x, y, 20, 0, 2 * Math.PI);
+    ctx.strokeStyle = "gold";
+    ctx.lineWidth = 4;
+    ctx.stroke();
   }
 });
 
-// ===== ループ =====
+// ===== フレーム処理（Cameraクラス使わない版）=====
 async function renderLoop() {
   if (video.readyState >= 2) {
     await hands.send({ image: video });
