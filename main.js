@@ -1,13 +1,52 @@
-const video = document.getElementById('video');
+const video = document.getElementById('video'); 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-// カメラ起動
-navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-  video.srcObject = stream;
+// ===== カメラ制御 =====
+let currentStream = null;
+let currentFacingMode = "user"; // 初期は内カメラ
+
+async function startCamera(facingMode) {
+  // 既存ストリーム停止
+  if (currentStream) {
+    currentStream.getTracks().forEach(track => track.stop());
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { exact: facingMode } }
+    });
+    video.srcObject = stream;
+    currentStream = stream;
+  } catch (e) {
+    // fallback
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: facingMode }
+    });
+    video.srcObject = stream;
+    currentStream = stream;
+  }
+}
+
+// 初期起動
+startCamera(currentFacingMode);
+
+// ===== 切り替えボタン =====
+const switchBtn = document.createElement("button");
+switchBtn.innerText = "カメラ切替";
+switchBtn.style.position = "absolute";
+switchBtn.style.top = "20px";
+switchBtn.style.right = "20px";
+switchBtn.style.zIndex = "10";
+switchBtn.style.padding = "10px";
+document.body.appendChild(switchBtn);
+
+switchBtn.addEventListener("click", () => {
+  currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
+  startCamera(currentFacingMode);
 });
 
-// MediaPipe設定
+// ===== MediaPipe設定 =====
 const hands = new Hands({
   locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
@@ -21,24 +60,24 @@ hands.setOptions({
   minTrackingConfidence: 0.7
 });
 
-// 検出結果
+// ===== 検出処理 =====
 hands.onResults(results => {
+  if (!video.videoWidth) return;
+
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if (results.multiHandLandmarks.length > 0) {
+  if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
     const landmarks = results.multiHandLandmarks[0];
 
-    // 薬指の関節（13と14）
     const p13 = landmarks[13];
     const p14 = landmarks[14];
 
     const x = (p13.x + p14.x) / 2 * canvas.width;
     const y = (p13.y + p14.y) / 2 * canvas.height;
 
-    // 仮リング描画（円）
     ctx.beginPath();
     ctx.arc(x, y, 20, 0, 2 * Math.PI);
     ctx.strokeStyle = "gold";
@@ -47,13 +86,12 @@ hands.onResults(results => {
   }
 });
 
-// カメラと連携
-const camera = new Camera(video, {
-  onFrame: async () => {
+// ===== フレーム処理（Cameraクラス使わない版）=====
+async function renderLoop() {
+  if (video.readyState >= 2) {
     await hands.send({ image: video });
-  },
-  width: 640,
-  height: 480
-});
+  }
+  requestAnimationFrame(renderLoop);
+}
 
-camera.start();
+renderLoop();
