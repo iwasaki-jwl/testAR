@@ -4,7 +4,7 @@ const ctx = canvas.getContext('2d');
 
 // ===== カメラ制御 =====
 let currentStream = null;
-let currentFacingMode = "user"; // 初期は内カメラ
+let currentFacingMode = "environment"; // 初期は内カメラ
 
 async function startCamera(facingMode) {
   // 既存ストリーム停止
