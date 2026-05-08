@@ -4,9 +4,12 @@ const ctx = canvas.getContext('2d');
 const blueRingImg = new Image();
 blueRingImg.src = "./models/blueR_5784.PNG";
 
-
 const orangeRingImg = new Image();
 orangeRingImg.src = "./models/orangeR_5785.PNG";
+
+const paraRingImg = new Image();
+paraRingImg.src = "./models/IMG_6110.PNG";
+
 
 // 現在選択中のリング
 let currentRingImg = blueRingImg;
@@ -96,6 +99,17 @@ orangeBtn.addEventListener("click", () => {
 });
 
 ringSelector.appendChild(orangeBtn);
+
+// ③パライバリングボタン
+const paraBtn = document.createElement("button");
+paraBtn.innerText = "③";
+paraBtn.style.padding = "10px";
+
+paraBtn.addEventListener("click", () => {
+  currentRingImg = paraRingImg;
+});
+
+ringSelector.appendChild(paraBtn);
 
 // ===== MediaPipe設定 =====
 const hands = new Hands({
