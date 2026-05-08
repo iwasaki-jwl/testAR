@@ -1,10 +1,24 @@
 const video = document.getElementById('video'); 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+const blueRingImg = new Image();
+blueRingImg.src = "./models/blueR_5784.PNG";
+
+
+const orangeRingImg = new Image();
+orangeRingImg.src = "./models/orangeR_5785.PNG";
+
+// 現在選択中のリング
+let currentRingImg = blueRingImg;
 
 // ===== カメラ制御 =====
 let currentStream = null;
-let currentFacingMode = "user"; // 初期は内カメラ
+let currentFacingMode = "environment"; // 初期は内カメラ
+
+// スムージング用座標
+let smoothX = 0;
+let smoothY = 0;
+let smoothAngle = 0;
 
 async function startCamera(facingMode) {
   // 既存ストリーム停止
@@ -46,6 +60,43 @@ switchBtn.addEventListener("click", () => {
   startCamera(currentFacingMode);
 });
 
+// ===== リング選択ボタン =====
+
+// ボタンを入れる箱
+const ringSelector = document.createElement("div");
+
+ringSelector.style.position = "absolute";
+ringSelector.style.bottom = "20px";
+ringSelector.style.left = "50%";
+ringSelector.style.transform = "translateX(-50%)";
+ringSelector.style.display = "flex";
+ringSelector.style.gap = "10px";
+ringSelector.style.zIndex = "10";
+
+document.body.appendChild(ringSelector);
+
+// ① 青リングボタン
+const blueBtn = document.createElement("button");
+blueBtn.innerText = "①";
+blueBtn.style.padding = "10px";
+
+blueBtn.addEventListener("click", () => {
+  currentRingImg = blueRingImg;
+});
+
+ringSelector.appendChild(blueBtn);
+
+// ② オレンジリングボタン
+const orangeBtn = document.createElement("button");
+orangeBtn.innerText = "②";
+orangeBtn.style.padding = "10px";
+
+orangeBtn.addEventListener("click", () => {
+  currentRingImg = orangeRingImg;
+});
+
+ringSelector.appendChild(orangeBtn);
+
 // ===== MediaPipe設定 =====
 const hands = new Hands({
   locateFile: (file) => {
@@ -72,17 +123,41 @@ hands.onResults(results => {
   if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
     const landmarks = results.multiHandLandmarks[0];
 
-    const p13 = landmarks[13];
-    const p14 = landmarks[14];
+    const p13 = landmarks[9];
+    const p14 = landmarks[10];
 
     const x = (p13.x + p14.x) / 2 * canvas.width;
     const y = (p13.y + p14.y) / 2 * canvas.height;
 
-    ctx.beginPath();
-    ctx.arc(x, y, 20, 0, 2 * Math.PI);
-    ctx.strokeStyle = "gold";
-    ctx.lineWidth = 4;
-    ctx.stroke();
+// スムージング強さ（0〜1）
+    const smoothFactor = 0.5;
+
+// 座標を滑らかに更新
+smoothX += (x - smoothX) * smoothFactor;
+smoothY += (y - smoothY) * smoothFactor;
+
+    const dx = p14.x - p13.x;
+    const dy = p14.y - p13.y;
+    
+    const angle = Math.atan2(dy, dx);
+    smoothAngle += (angle - smoothAngle) * smoothFactor;
+
+    const ringSize = 40;
+
+ctx.save();
+
+ctx.translate(smoothX, smoothY);
+ctx.rotate(smoothAngle + Math.PI / 2);
+
+ctx.drawImage(
+  currentRingImg,
+  -ringSize / 2,
+  -ringSize / 2,
+  ringSize,
+  ringSize
+);
+
+ctx.restore();
   }
 });
 
