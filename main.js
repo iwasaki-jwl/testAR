@@ -170,8 +170,12 @@ smoothY += (y - smoothY) * smoothFactor;
     
     const angle = Math.atan2(dy, dx);
     smoothAngle += (angle - smoothAngle) * smoothFactor;
-//　リングのサイズ
-    const ringSize = 45;
+//　〇リングのサイズ
+    // 指の関節距離
+const distance = Math.sqrt(dx * dx + dy * dy);
+
+// リングサイズ計算
+const ringSize = distance * canvas.width * 2.5;
 
 ctx.save();
 
