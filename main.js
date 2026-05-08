@@ -135,7 +135,7 @@ ctx.save();
 
 ctx.translate(x, y);
 
-ctx.rotate(angle);
+ctx.rotate(angle + Math.PI / 2);
 
 ctx.drawImage(
   currentRingImg,
