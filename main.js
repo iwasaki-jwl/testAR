@@ -15,6 +15,11 @@ let currentRingImg = blueRingImg;
 let currentStream = null;
 let currentFacingMode = "environment"; // 初期は内カメラ
 
+// スムージング用座標
+let smoothX = 0;
+let smoothY = 0;
+let smoothAngle = 0;
+
 async function startCamera(facingMode) {
   // 既存ストリーム停止
   if (currentStream) {
@@ -124,18 +129,25 @@ hands.onResults(results => {
     const x = (p13.x + p14.x) / 2 * canvas.width;
     const y = (p13.y + p14.y) / 2 * canvas.height;
 
+// スムージング強さ（0〜1）
+    const smoothFactor = 0.2;
+
+// 座標を滑らかに更新
+smoothX += (x - smoothX) * smoothFactor;
+smoothY += (y - smoothY) * smoothFactor;
+
     const dx = p14.x - p13.x;
     const dy = p14.y - p13.y;
     
     const angle = Math.atan2(dy, dx);
+    smoothAngle += (angle - smoothAngle) * smoothFactor;
 
     const ringSize = 40;
 
 ctx.save();
 
-ctx.translate(x, y);
-
-ctx.rotate(angle + Math.PI / 2);
+ctx.translate(smoothX, smoothY);
+ctx.rotate(smoothAngle + Math.PI / 2);
 
 ctx.drawImage(
   currentRingImg,
