@@ -80,7 +80,7 @@ hands.onResults(results => {
     const x = (p13.x + p14.x) / 2 * canvas.width;
     const y = (p13.y + p14.y) / 2 * canvas.height;
 
-    const ringSize = 80;
+    const ringSize = 40;
 
 ctx.drawImage(
   ringImg,
