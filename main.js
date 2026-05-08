@@ -13,7 +13,7 @@ let currentRingImg = blueRingImg;
 
 // ===== カメラ制御 =====
 let currentStream = null;
-let currentFacingMode = "environment"; // 初期は内カメラ
+let currentFacingMode = "environment"; // 初期は外カメラ
 
 // スムージング用座標
 let smoothX = 0;
