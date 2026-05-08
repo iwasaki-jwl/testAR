@@ -1,6 +1,8 @@
 const video = document.getElementById('video'); 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+const ringImg = new Image();
+ringImg.src = "./models/blueR_5784.PNG";
 
 // ===== カメラ制御 =====
 let currentStream = null;
@@ -78,11 +80,15 @@ hands.onResults(results => {
     const x = (p13.x + p14.x) / 2 * canvas.width;
     const y = (p13.y + p14.y) / 2 * canvas.height;
 
-    ctx.beginPath();
-    ctx.arc(x, y, 20, 0, 2 * Math.PI);
-    ctx.strokeStyle = "gold";
-    ctx.lineWidth = 4;
-    ctx.stroke();
+    const ringSize = 80;
+
+ctx.drawImage(
+  ringImg,
+  x - ringSize / 2,
+  y - ringSize / 2,
+  ringSize,
+  ringSize
+);
   }
 });
 
