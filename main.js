@@ -218,7 +218,7 @@ smoothY += (y - smoothY) * smoothFactor;
 const distance = Math.sqrt(dx * dx + dy * dy);
 
 // リングサイズ計算
-const ringSize = distance * canvas.width * 0.6;
+const ringSize = distance * canvas.width * 0.7;
 
 ctx.save();
 
