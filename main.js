@@ -1,8 +1,15 @@
 const video = document.getElementById('video'); 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-const ringImg = new Image();
-ringImg.src = "./models/blueR_5784.PNG";
+const blueRingImg = new Image();
+blueRingImg.src = "./models/blueR_5784.PNG";
+
+
+const orangeRingImg = new Image();
+orangeRingImg.src = "./models/orangeR_5785.PNG";
+
+// 現在選択中のリング
+let currentRingImg = blueRingImg;
 
 // ===== カメラ制御 =====
 let currentStream = null;
@@ -48,6 +55,43 @@ switchBtn.addEventListener("click", () => {
   startCamera(currentFacingMode);
 });
 
+// ===== リング選択ボタン =====
+
+// ボタンを入れる箱
+const ringSelector = document.createElement("div");
+
+ringSelector.style.position = "absolute";
+ringSelector.style.bottom = "20px";
+ringSelector.style.left = "50%";
+ringSelector.style.transform = "translateX(-50%)";
+ringSelector.style.display = "flex";
+ringSelector.style.gap = "10px";
+ringSelector.style.zIndex = "10";
+
+document.body.appendChild(ringSelector);
+
+// ① 青リングボタン
+const blueBtn = document.createElement("button");
+blueBtn.innerText = "①";
+blueBtn.style.padding = "10px";
+
+blueBtn.addEventListener("click", () => {
+  currentRingImg = blueRingImg;
+});
+
+ringSelector.appendChild(blueBtn);
+
+// ② オレンジリングボタン
+const orangeBtn = document.createElement("button");
+orangeBtn.innerText = "②";
+orangeBtn.style.padding = "10px";
+
+orangeBtn.addEventListener("click", () => {
+  currentRingImg = orangeRingImg;
+});
+
+ringSelector.appendChild(orangeBtn);
+
 // ===== MediaPipe設定 =====
 const hands = new Hands({
   locateFile: (file) => {
@@ -83,7 +127,7 @@ hands.onResults(results => {
     const ringSize = 40;
 
 ctx.drawImage(
-  ringImg,
+   currentRingImg,
   x - ringSize / 2,
   y - ringSize / 2,
   ringSize,
