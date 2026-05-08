@@ -130,7 +130,7 @@ hands.onResults(results => {
     const y = (p13.y + p14.y) / 2 * canvas.height;
 
 // スムージング強さ（0〜1）
-    const smoothFactor = 0.2;
+    const smoothFactor = 0.5;
 
 // 座標を滑らかに更新
 smoothX += (x - smoothX) * smoothFactor;
