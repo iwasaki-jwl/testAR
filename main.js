@@ -124,15 +124,28 @@ hands.onResults(results => {
     const x = (p13.x + p14.x) / 2 * canvas.width;
     const y = (p13.y + p14.y) / 2 * canvas.height;
 
+    const dx = p14.x - p13.x;
+    const dy = p14.y - p13.y;
+    
+    const angle = Math.atan2(dy, dx);
+
     const ringSize = 40;
 
+ctx.save();
+
+ctx.translate(x, y);
+
+ctx.rotate(angle);
+
 ctx.drawImage(
-   currentRingImg,
-  x - ringSize / 2,
-  y - ringSize / 2,
+  currentRingImg,
+  -ringSize / 2,
+  -ringSize / 2,
   ringSize,
   ringSize
 );
+
+ctx.restore();
   }
 });
 
