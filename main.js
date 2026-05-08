@@ -123,8 +123,8 @@ hands.onResults(results => {
   if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
     const landmarks = results.multiHandLandmarks[0];
 
-    const p13 = landmarks[13];
-    const p14 = landmarks[14];
+    const p13 = landmarks[9];
+    const p14 = landmarks[10];
 
     const x = (p13.x + p14.x) / 2 * canvas.width;
     const y = (p13.y + p14.y) / 2 * canvas.height;
