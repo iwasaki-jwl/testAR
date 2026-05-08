@@ -14,6 +14,9 @@ paraRingImg.src = "./models/IMG_6110.PNG";
 const emeRingImg = new Image();
 emeRingImg.src = "./models/IMG_6113.PNG";
 
+const ydRingImg = new Image();
+ydRingImg.src = "./models/IMG_6112.PNG";
+
 
 // 現在選択中のリング
 let currentRingImg = blueRingImg;
@@ -115,7 +118,7 @@ paraBtn.addEventListener("click", () => {
 
 ringSelector.appendChild(paraBtn);
 
-// エメラルドリングボタン
+// 4エメラルドリングボタン
 const emeBtn = document.createElement("button");
 emeBtn.innerText = "④";
 emeBtn.style.padding = "10px";
@@ -125,6 +128,17 @@ emeBtn.addEventListener("click", () => {
 });
 
 ringSelector.appendChild(emeBtn);
+
+//5イエローダイヤリングボタン
+const ydBtn = document.createElement("button");
+ydBtn.innerText = "⑤";
+ydBtn.style.padding = "10px";
+
+ydBtn.addEventListener("click", () => {
+  currentRingImg = ydRingImg;
+});
+
+ringSelector.appendChild(ydBtn);
 
 // ===== MediaPipe設定 =====
 const hands = new Hands({
