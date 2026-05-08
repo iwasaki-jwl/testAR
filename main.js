@@ -10,12 +10,18 @@ orangeRingImg.src = "./models/orangeR_5785.PNG";
 const paraRingImg = new Image();
 paraRingImg.src = "./models/IMG_6110.PNG";
 
-
 const emeRingImg = new Image();
 emeRingImg.src = "./models/IMG_6113.PNG";
 
 const ydRingImg = new Image();
 ydRingImg.src = "./models/IMG_6112.PNG";
+
+const zirRingImg = new Image();
+zirRingImg.src = "./models/IMG_6111.PNG";
+
+const opRingImg = new Image();
+opRingImg.src = "./models/IMG_6109.PNG";
+
 
 
 // 現在選択中のリング
@@ -139,6 +145,29 @@ ydBtn.addEventListener("click", () => {
 });
 
 ringSelector.appendChild(ydBtn);
+
+//6ジルコンリングボタン
+const zirBtn = document.createElement("button");
+zirBtn.innerText = "⑥";
+zirBtn.style.padding = "10px";
+
+zirBtn.addEventListener("click", () => {
+  currentRingImg = zirRingImg;
+});
+
+ringSelector.appendChild(zirBtn);
+
+//7オパールリングボタン
+const opBtn = document.createElement("button");
+opBtn.innerText = "⑦";
+opBtn.style.padding = "10px";
+
+opBtn.addEventListener("click", () => {
+  currentRingImg = opRingImg;
+});
+
+ringSelector.appendChild(opBtn);
+
 
 // ===== MediaPipe設定 =====
 const hands = new Hands({
