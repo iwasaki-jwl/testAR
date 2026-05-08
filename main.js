@@ -11,6 +11,10 @@ const paraRingImg = new Image();
 paraRingImg.src = "./models/IMG_6110.PNG";
 
 
+const emeRingImg = new Image();
+emeRingImg.src = "./models/IMG_6113.PNG";
+
+
 // 現在選択中のリング
 let currentRingImg = blueRingImg;
 
@@ -110,6 +114,17 @@ paraBtn.addEventListener("click", () => {
 });
 
 ringSelector.appendChild(paraBtn);
+
+// エメラルドリングボタン
+const emeBtn = document.createElement("button");
+emeBtn.innerText = "④";
+emeBtn.style.padding = "10px";
+
+emeBtn.addEventListener("click", () => {
+  currentRingImg = emeRingImg;
+});
+
+ringSelector.appendChild(emeBtn);
 
 // ===== MediaPipe設定 =====
 const hands = new Hands({
