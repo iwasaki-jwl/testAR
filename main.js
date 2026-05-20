@@ -195,11 +195,11 @@ hands.onResults(results => {
   if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
     const landmarks = results.multiHandLandmarks[0];
 
-    const p9 = landmarks[9];
-    const p10 = landmarks[10];
+    const p17 = landmarks[17];
+    const p18 = landmarks[18];
 
-    const x = (p9.x + p10.x) / 2 * canvas.width;
-    const y = (p9.y + p10.y) / 2 * canvas.height;
+    const x = (p17.x + p18.x) / 2 * canvas.width;
+    const y = (p17.y + p18.y) / 2 * canvas.height;
 
 // スムージング強さ（0〜1）
     const smoothFactor = 0.5;
@@ -208,8 +208,8 @@ hands.onResults(results => {
 smoothX += (x - smoothX) * smoothFactor;
 smoothY += (y - smoothY) * smoothFactor;
 
-    const dx = p10.x - p9.x;
-    const dy = p10.y - p9.y;
+    const dx = p18.x - p17.x;
+    const dy = p18.y - p17.y;
     
     const angle = Math.atan2(dy, dx);
     smoothAngle += (angle - smoothAngle) * smoothFactor;
