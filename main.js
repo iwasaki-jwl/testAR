@@ -2,7 +2,7 @@ const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const blueRingImg = new Image();
-blueRingImg.src = "./models/twist-s-ruby.jpg";
+blueRingImg.src = "./models/blueR_5784.PNG";
 
 const orangeRingImg = new Image();
 orangeRingImg.src = "./models/orangeR_5785.PNG";
